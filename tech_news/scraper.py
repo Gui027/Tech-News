@@ -1,5 +1,6 @@
 import time
 import requests
+import parsel
 
 
 # Requisito 1
@@ -16,7 +17,14 @@ def fetch(url, timeout=3):
 
 # Requisito 2
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    selector = parsel.Selector(html_content)
+    news = selector.css("a.cs-overlay-link::attr(href)").getall()
+    if not news:
+        return []
+    return news
+
+
+# page_content = fetch("https://blog.betrybe.com")
 
 
 # Requisito 3
