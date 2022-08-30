@@ -1,6 +1,7 @@
 import time
 import requests
 import parsel
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -36,6 +37,14 @@ def scrape_next_page_link(html_content):
     return next_page
 
 
+def count_comments(selector):
+    counter = 0
+    comments: str = selector.css("div.post-comments h5::text").get()
+    if comments is not None:
+        counter = int("".join(filter(str.isdigit, comments)))
+    return counter
+
+
 # Requisito 4
 def scrape_noticia(html_content):
     selector = parsel.Selector(html_content)
@@ -43,12 +52,12 @@ def scrape_noticia(html_content):
     title = selector.css("h1.entry-title::text").get().strip()
     timestamp = selector.css("li.meta-date::text").get().strip()
     writer = selector.css("a.url.fn.n::text").get()
-    comments_count = len(selector.css(".comment-list li").getall())
+    comments_count = count_comments(selector)
     summary = "".join(
         selector.css(".entry-content > p:nth-of-type(1) *::text").getall()
         ).strip()
-    tags = selector.css(".post-tags a::text").getall()
-    category = selector.css("span.label::text").get().strip()
+    tags = selector.css(".post-tags li a::text").getall()
+    category = selector.css("span.label::text").get()
 
     return {
         "url": url,
@@ -64,4 +73,19 @@ def scrape_noticia(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    base_url = "https://blog.betrybe.com"
+    html_content = fetch(base_url)
+    count = 0
+    news = []
+    while count < amount:
+        for url in scrape_novidades(html_content):
+            count += 1
+            if count > amount:
+                break
+            else:
+                news.append(scrape_noticia(fetch(url)))
+
+        base_url = scrape_next_page_link(html_content)
+
+    create_news(news)
+    return news
