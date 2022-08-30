@@ -37,14 +37,6 @@ def scrape_next_page_link(html_content):
     return next_page
 
 
-def count_comments(selector):
-    counter = 0
-    comments: str = selector.css("div.post-comments h5::text").get()
-    if comments is not None:
-        counter = int("".join(filter(str.isdigit, comments)))
-    return counter
-
-
 # Requisito 4
 def scrape_noticia(html_content):
     selector = parsel.Selector(html_content)
@@ -52,12 +44,12 @@ def scrape_noticia(html_content):
     title = selector.css("h1.entry-title::text").get().strip()
     timestamp = selector.css("li.meta-date::text").get().strip()
     writer = selector.css("a.url.fn.n::text").get()
-    comments_count = count_comments(selector)
+    comments_count = len(selector.css(".comment-list li").getall())
     summary = "".join(
         selector.css(".entry-content > p:nth-of-type(1) *::text").getall()
         ).strip()
-    tags = selector.css(".post-tags li a::text").getall()
-    category = selector.css("span.label::text").get()
+    tags = selector.css(".post-tags a::text").getall()
+    category = selector.css("span.label::text").get().strip()
 
     return {
         "url": url,
@@ -73,7 +65,7 @@ def scrape_noticia(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    base_url = "https://blog.betrybe.com"
+    base_url = "https://blog.betrybe.com/"
     html_content = fetch(base_url)
     count = 0
     news = []
