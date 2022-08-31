@@ -7,7 +7,10 @@ def search_by_title(title):
     search = search_news({"title": {"$regex": title, "$options": "i"}})
     title_news = []
     for item in search:
-        title_news.append((item["title"], item["url"]))
+        if len(search) > 0:
+            title_news.append((item["title"], item["url"]))
+        else:
+            title_news = []
     return title_news
 
 
@@ -21,7 +24,10 @@ def search_by_tag(tag):
     search = search_news({'tags': {'$regex': tag, '$options': 'i'}})
     tag_news = []
     for item in search:
-        tag_news.append((item['title'], item['url']))
+        if len(search) > 0:
+            tag_news.append((item["title"], item["url"]))
+        else:
+            tag_news = []
     return tag_news
 
 
@@ -30,5 +36,8 @@ def search_by_category(category):
     search = search_news({'category': {'$regex': category, '$options': 'i'}})
     category_news = []
     for item in search:
-        category_news.append((item['title'], item['url']))
+        if len(search) > 0:
+            category_news.append((item['title'], item['url']))
+        else:
+            category_news = []
     return category_news
