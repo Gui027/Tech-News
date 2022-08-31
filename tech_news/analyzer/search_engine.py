@@ -1,4 +1,5 @@
 from tech_news.database import search_news
+from datetime import date as dt
 
 
 # Requisito 6
@@ -15,8 +16,22 @@ def search_by_title(title):
 
 
 # Requisito 7
+# https://docs.python.org/3/library/datetime.html
+# https://www.hashtagtreinamentos.com/como-trabalhar-com-tempo-no-python?gclid=CjwKCAjw6raYBhB7EiwABge5Klo1AKnZoJMo1a_zb-fE8BhnxIgCyY26-YFcSpFW_SUhFP40fb-y4BoCLTEQAvD_BwE
 def search_by_date(date):
-    """Seu código deve vir aqui"""
+    try:
+        date_iso = dt.fromisoformat(date)
+        date_string = dt.strftime(date_iso, "%d/%m/%Y")
+        search = search_news({"timestamp": date_string})
+        date_news = []
+        for item in search:
+            if len(search) > 0:
+                date_news.append((item["title"], item["url"]))
+            else:
+                date_news = []
+        return date_news
+    except ValueError:
+        raise ValueError("Data inválida")
 
 
 # Requisito 8
