@@ -2,6 +2,7 @@ from tech_news.database import search_news
 
 
 # Requisito 6
+# https://www.thecodebuzz.com/mongodb-query-case-sensitive-case-insensitive/
 def search_by_title(title):
     search = search_news({"title": {"$regex": title, "$options": "i"}})
     title_news = []
