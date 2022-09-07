@@ -1,4 +1,4 @@
-# Projeto Algorithms
+# Projeto Tech News
 
 # Contexto
 
